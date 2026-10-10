@@ -4,16 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Note</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-*{box-sizing:border-box}body{margin:0;padding:20px;font:18px/1.65 Georgia,"Times New Roman",serif}main{max-width:780px;margin:0 auto}iframe{display:block;width:100%;height:80vh;border:0;font:inherit}a{overflow-wrap:anywhere}
+*{box-sizing:border-box}body{margin:0;padding:24px 18px;font:18px/1.65 Georgia,"Times New Roman",serif;color:#111;background:#fff}main{max-width:760px;margin:0 auto}img{display:block;width:100%;max-width:620px;height:auto;margin:0 auto 28px}#note{white-space:pre-wrap;overflow-wrap:anywhere}
 </style>
 </head>
-<body>
-<main>
-<h1>My Note</h1>
-<iframe title="Original uploaded note" src="https://raw.githubusercontent.com/chrisoh2605/My-final-Goodbye/main/Note"></iframe>
-<p><a href="https://github.com/chrisoh2605/My-final-Goodbye/blob/main/Note">Open the original note file</a></p>
+<body><main>
+<img src="https://raw.githubusercontent.com/chrisoh2605/My-final-Goodbye/main/photo.jpg" alt="Photo">
+<div id="note">Loading note…</div>
 </main>
-</body>
-</html>
+<script>
+fetch("https://raw.githubusercontent.com/chrisoh2605/My-final-Goodbye/main/Note")
+.then(r=>{if(!r.ok)throw Error("Could not load note");return r.text()})
+.then(t=>{document.getElementById("note").textContent=t})
+.catch(()=>{document.getElementById("note").textContent="The note could not be loaded. Open the Note file in this repository."});
+</script>
+</body></html>
