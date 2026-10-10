@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Letter Space</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 30px 16px;
+      font-family: Arial, sans-serif;
+      background: #f3f4f8;
+      color: #22263a;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 35px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0 8px 30px #20204012;
+    }
+
+    h1 { margin-top: 0; }
+    p { color: #656a7a; line-height: 1.5; }
+
+    textarea {
+      width: 100%;
+      min-height: 350px;
+      padding: 16px;
+      border: 1px solid #d5d8e2;
+      border-radius: 10px;
+      font: 16px/1.6 Arial, sans-serif;
+      resize: vertical;
+      outline-color: #635bdb;
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    button {
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: bold;
+    }
+
+    .primary { background: #635bdb; color: white; }
+    .secondary { background: #ececf5; color: #292943; }
+
+    button:hover { opacity: 0.85; }
+    #status { min-height: 24px; margin-top: 14px; }
+    .count { font-size: 13px; text-align: right; }
+
+    @media (max-width: 500px) {
+      .container { padding: 20px; margin: 10px auto; }
+      textarea { min-height: 300px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>My Letter Space ✉️</h1>
+    <p>Paste or type your letter below. Copy it or download it when you're done.</p>
+
+    <textarea id="letter" placeholder="Paste your letter here..."></textarea>
+
+    <div class="count" id="count">0 words · 0 characters</div>
+
+    <div class="buttons">
+      <button class="primary" onclick="copyLetter()">Copy Letter</button>
+      <button class="secondary" onclick="downloadLetter()">Download Letter</button>
+      <button class="secondary" onclick="clearLetter()">Clear</button>
+    </div>
+
+    <p id="status" role="status" aria-live="polite"></p>
+  </main>
+
+  <script>
+    const letter = document.getElementById("letter");
+    const status = document.getElementById("status");
+    const count = document.getElementById("count");
+
+    letter.addEventListener("input", updateCount);
+
+    function updateCount() {
+      const text = letter.value;
+      const words = text.trim()
+        ? text.trim().split(/\s+/).length : 0;
+
+      count.textContent =
+        `${words} words · ${text.length} characters`;
+    }
+
+    async function copyLetter() {
+      if (!letter.value.trim()) {
+        status.textContent = "Paste a letter first.";
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(letter.value);
+        status.textContent = "Letter copied successfully!";
+      } catch {
+        letter.select();
+        const copied = document.execCommand("copy");
+        status.textContent = copied
+          ? "Letter copied successfully!"
+          : "Please select the letter and copy it manually.";
+      }
+    }
+
+    function downloadLetter() {
+      if (!letter.value.trim()) {
+        status.textContent = "Paste a letter first.";
+        return;
+      }
+
+      const file = new Blob([letter.value], {
+        type: "text/plain;charset=utf-8"
+      });
+      const url = URL.createObjectURL(file);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "my-letter.txt";
+      link.click();
+      URL.revokeObjectURL(url);
+      status.textContent = "Your letter has been downloaded.";
+    }
+
+    function clearLetter() {
+      letter.value = "";
+      updateCount();
+      status.textContent = "The text box is clear.";
+    }
+  </script>
+</body>
+</html>
